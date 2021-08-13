@@ -18,8 +18,11 @@ module.exports = function (req, res, next) {
         try {
             // decode the sent jwt
             const decoded = jwt.verify(token, config.get('jwtPass'));
-            req.user = decoded;
-            req.shop = decoded;
+            if (decoded.isAdmin) {
+                req.user = decoded;
+            } else {
+                req.shop = decoded;
+            }
 
             next();
         } catch (ex) {

@@ -4,9 +4,12 @@ const morgan = require('morgan');
 const config = require('config');
 const mongoose = require('mongoose');
 
-const login = require('./route/login');
-const register = require('./route/register');
-const shop = require('./route/shop');
+const login = require('./routes/login');
+const register = require('./routes/register');
+const shop = require('./routes/shop');
+const admin = require('./routes/admin');
+const credit = require('./routes/credit');
+const home = require('./routes/home');
 
 const app = express();
 
@@ -29,6 +32,9 @@ if (app.get('env') == 'development') {
 app.use('/api/login', login);
 app.use('/api/register', register);
 app.use('/api/shop', shop);
+app.use('/api/admin', admin);
+app.use('/api/credit', credit);
+app.use('/api/home', home);
 
 if (!config.get('jwtPass')) {
     console.log('go define your jwt password');

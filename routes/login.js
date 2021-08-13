@@ -13,6 +13,7 @@ const { Shop, validateShopLogin } = require('../model/shop');
 const wrapper = require('../middleware/wrapper');
 const bodyValidator = require('../middleware/bodyValidator');
 
+// !working
 // route handler for logging in the shop owner;
 router.post('/', bodyValidator(validateShopLogin), wrapper ( async ( req, res) => {
     const { email, password } = req.body;
@@ -41,8 +42,8 @@ router.post('/', bodyValidator(validateShopLogin), wrapper ( async ( req, res) =
             const toReturn = _.pick(shop, [
                 'name', 'email', 'shopType',
                 'description', 'createdAt', 
-                'phoneNumber', 'password',
-                'change', 'credit', '_id'
+                'phoneNumber', '_id',
+                'change', 'credit'
             ]);
 
             // response, success

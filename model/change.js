@@ -48,7 +48,7 @@ const changeSchema = new Schema({
 const Change = mongoose.model('Change', changeSchema);
 
 // function for validating the request body for creating CHANGE
-function validate (input) {
+function validateChange (input) {
     const schema = Joi.object({
         nameOfCollector: Joi.string()
             .required()
@@ -57,7 +57,12 @@ function validate (input) {
 
         amount: Joi.number()
             .required()
-            .min(0)
+            .min(0),
+
+        genderOfCollector: Joi.string()
+            .required()
+            .min(4)
+            .max(6)
     });
 
     const result = schema.validate(input);
@@ -66,6 +71,6 @@ function validate (input) {
 
 module.exports = {
     Change,
-    validate,
+    validateChange,
     changeSchema
 }

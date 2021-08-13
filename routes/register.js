@@ -13,6 +13,7 @@ const { Shop, validateShop } = require('../model/shop');
 const wrapper = require('../middleware/wrapper');
 const bodyValidator = require('../middleware/bodyValidator');
 
+// !working 95%
 // route handler for registering a new shop
 router.post('/', bodyValidator(validateShop), wrapper ( async (req, res) => {
     const { 
@@ -37,21 +38,24 @@ router.post('/', bodyValidator(validateShop), wrapper ( async (req, res) => {
 
         // create the shop
         shop = new Shop({
-            email, name,
-            phoneNumber, hashedPassword,
-            city, description, shopType
+            email, name, shopType,
+            phoneNumber,  city,
+            description, 
+            password: hashedPassword
         });
 
         // save the shop
         await shop.save();
 
         // generate auth token and return values
-        // ! send an email to the registered email
+        const token = shop.generateAuthToken();
+        shop.sendMail('welcome'); // ! not working yet
+
         const toReturn = _.pick(shop, [
             'name', 'email', 'shopType',
             'description', 'createdAt', 
-            'phoneNumber', 'password',
-            'change', 'credit', '_id'
+            'phoneNumber', '_id',
+            'change', 'credit'
         ]);
 
         // response, success

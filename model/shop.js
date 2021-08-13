@@ -9,7 +9,8 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
-const { changeSchema } = require('./change');
+// const { changeSchema } = require('./change');
+const mail = require('../middleware/mailer');
 
 // the schema each shop in the db would be modelled around
 const shopSchema = new Schema({
@@ -67,7 +68,8 @@ const shopSchema = new Schema({
     },
 
     change: {
-        type: [ changeSchema ]
+        type: [ mongoose.Schema.Types.ObjectId ],
+        ref: 'Change'
     },
 
     credit: {
@@ -80,6 +82,10 @@ const shopSchema = new Schema({
 shopSchema.methods.generateAuthToken = function () {
     const token = jwt.sign({ _id: this._id }, config.get('jwtPass'));
     return token;
+}
+
+shopSchema.methods.sendMail = function (text) {
+    mail(this.email, text);
 }
 
 // the shop model

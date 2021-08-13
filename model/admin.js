@@ -3,8 +3,8 @@
  */
 
 //module dependencies
-const mongoose = require('mongose');
-const Schema = require('mongose');
+const mongoose = require('mongoose');
+const { Schema } = require('mongoose');
 const config = require('config');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');

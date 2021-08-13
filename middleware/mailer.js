@@ -19,7 +19,7 @@ module.exports = function (customerMail, text) {
 
     mailTransporter.sendMail(mailDetails, function (err, data) {
         if (err) {
-            console.log('Error')
+            console.log(err)
         } else {
             console.log('email sent')
         }

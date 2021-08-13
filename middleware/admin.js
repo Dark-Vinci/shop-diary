@@ -9,7 +9,7 @@ module.exports = function (req, res, next) {
         // user is not an admin
         return res.status(403).json({
             status: 403,
-            message: 'no try am again, oga go kill you'
+            message: 'no try am again, or make dem close your shop?'
         })
     } else {
         // the user is an admin
