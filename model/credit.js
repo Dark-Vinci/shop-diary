@@ -78,6 +78,11 @@ const creditSchema = new Schema({
         type: Boolean,
         required: true, 
         default: false
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
@@ -90,7 +95,7 @@ creditSchema.methods.getSummary = function () {
 
     // calculating the real amount paid from the array of amountPaid schema 
     const realAmountPaid = amountPaid.map((element) => {
-        return element.amountPaid;
+        return element.amount;
     }).reduce((a, b) => {
         return a + b
     }, 0);
@@ -108,11 +113,13 @@ creditSchema.methods.getSummary = function () {
     // data to be returned
     const toReturn = { 
         totalProductPrice,
-        amountPaid: realAmountPaid,
+        amountPaidAfterCollection: realAmountPaid,
         initialAmountPaid: initialPay,
         debt: debt,
-        completed: debt == 0
+        completed: debt <= 0
     }
+
+    // this.completed = debt <= 0;
 
     return toReturn;
 }
@@ -120,15 +127,17 @@ creditSchema.methods.getSummary = function () {
 // instance method to get the payment timeline
 creditSchema.methods.paymentTimeline = function () {
     const paymentTimeline = this.amountPaid;
-
+// console.log(this.amountPaid)
     let toReturn = {
         [this.createdAt] : this.initialPay
     };
-
+// console.log(paymentTimeline)
     for (let i of paymentTimeline) {
-        toReturn[i].datePaid = i.amountPaid;
+        // console.log(paymentTimeline[i]);
+        console.log(i)
+        toReturn[i.datePaid] = i.amount;
     }
-
+console.log(toReturn);
     return toReturn;
 }
 
@@ -144,29 +153,27 @@ const Credit = mongoose.model('Credit', creditSchema);
 // validator function, validates the creation of a credit document
 function validateCredit (input) {
     // validating the products object
-    const productSchema = Joi.object().keys({
-        products: Joi.array().items(Joi.object({
-            product: Joi.string()
-                .required()
-                .min(2)
-                .max(100),
+    const productSchema = Joi.array().items(Joi.object({
+        product: Joi.string()
+            .required()
+            .min(2)
+            .max(100),
 
-            price: Joi.number()
-                .required()
-                .min(0),
+        price: Joi.number()
+            .required()
+            .min(0),
 
-            amount: Joi.number()
-                .integer()
-                .min(1)
-        }))
-    });
+        amount: Joi.number()
+            .integer()
+            .min(1)
+    }))
 
     // the main schema of the credit
     const schema = Joi.object({
         nameOfCollector: Joi.string()
             .required()
             .min(3)
-            .min(50),
+            .max(50),
 
         genderOfCollector: Joi.string()
             .required()
@@ -235,52 +242,3 @@ module.exports = {
     validatePaid,
     validateCreditEdit
 }
-
-/* 
-    products: {
-        array of object containing product, price, qauntity
-        of the product that was bought on credit
-        type: [
-            new Schema({
-                product: { 
-                    type: String,
-                    required: true,
-                    minlength: 2,
-                    maxlength: 100
-                },
-
-                price: {
-                    type: Number,
-                    required: true,
-                    min: 0,
-                    set: v => v.toFixed(2),
-                    get: v => v.toFixed(2)
-                },
-
-                quantity: {
-                    type: Number,
-                    default: 1,
-                    required: true,
-                    min: 1
-                }
-            })
-        ],
-        validate: {
-            validator: function (v) {
-                return v && v.length > 0
-            },
-            message: 'the debtors should buy at least one product'
-        }
-    },
-
-
-        amountPaid: {
-        array of object containing the date payed and amount paid
-        type: [
-            new Schema({
-                datePaid: { type: Date, required: true },
-                amountPaid: { type: Number, required: true, min: 0 }
-            })
-        ]
-    },
- */

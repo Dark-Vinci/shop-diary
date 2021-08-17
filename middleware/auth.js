@@ -15,6 +15,7 @@ module.exports = function (req, res, next) {
             message: 'no token provided'
         });
     } else {
+        // !console.log('here')
         try {
             // decode the sent jwt
             const decoded = jwt.verify(token, config.get('jwtPass'));
